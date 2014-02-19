@@ -62,7 +62,7 @@ public class Percolation {
         if (!sites[i - 1][j - 1]) return false;
 
         for (int col = 1; col <= size; col++) {
-            if (sitesSet.connected(indexOf(i, j), indexOf(0, col))) return true;
+            if (sitesSet.connected(indexOf(i, j), indexOf(1, col))) return true;
         }
 
         return false;
