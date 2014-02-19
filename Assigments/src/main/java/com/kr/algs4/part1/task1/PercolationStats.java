@@ -4,22 +4,18 @@ import seidgewick.StdOut;
 import seidgewick.StdRandom;
 import seidgewick.Stopwatch;
 
-/**
- * Created with IntelliJ IDEA.
- * User: cONST
- * Date: 18.02.14
- * Time: 1:05
- * To change this template use File | Settings | File Templates.
- */
 public class PercolationStats {
     private double mean = 0.0;
     private double stddev = 0.0;
+    private final double T;
 
     /**
      * perform T independent computational experiments on an N-by-N grid
      */
     public PercolationStats(int N, int T) {
-        double x[] = new double[T];
+        this.T = T;
+        long[] x = new long[T];
+        long totalOpened = 0;
 
         for (int i = 0; i < T; i++) {
             Percolation percolation = new Percolation(N);
@@ -38,16 +34,16 @@ public class PercolationStats {
                     }
                 } while (!opened);
             }
-            x[i] = (double) openedCells / (N * N);
-            mean += x[i];
+            x[i] = openedCells;
+            totalOpened += x[i];
         }
 
-        mean = mean / T;
+        mean = (double) totalOpened / (N * N * T);
 
         for (int i = 0; i < T; i++) {
-            stddev += Math.pow(x[i] - mean, 2);
+            stddev += (((double) x[i] / (N * N) - mean) * ((double) x[i] / (N * N) - mean));
         }
-        stddev = Math.sqrt(stddev / (double) (T - 1));
+        stddev = Math.sqrt(stddev / (T - 1));
     }
 
     /**
@@ -69,14 +65,14 @@ public class PercolationStats {
      * returns lower bound of the 95% confidence interval
      */
     public double confidenceLo() {
-        return 0;
+        return mean() - 1.96 * stddev() / Math.sqrt(T);
     }
 
     /**
      * returns upper bound of the 95% confidence interval
      */
     public double confidenceHi() {
-        return 0;
+        return mean() + 1.96 * stddev() / Math.sqrt(T);
     }
 
     public static void main(String[] args) {
@@ -89,9 +85,7 @@ public class PercolationStats {
             StdOut.printf("Seconds elapsed = %f\n", timer.elapsedTime());
             StdOut.printf("mean = %f\n", percolationStats.mean());
             StdOut.printf("stddev = %f\n", percolationStats.stddev());
-
-            double v = 1.96 * percolationStats.stddev() / Math.sqrt(T);
-            StdOut.printf("95%% confidence interval = %f, %f\n", percolationStats.mean() - v, percolationStats.mean() + v);
+            StdOut.printf("95%% confidence interval = %f, %f\n", percolationStats.confidenceLo(), percolationStats.confidenceHi());
         } else StdOut.println("Missing required parameters N and T");
     }
 }

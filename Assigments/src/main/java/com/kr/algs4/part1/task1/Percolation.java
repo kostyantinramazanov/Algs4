@@ -2,17 +2,10 @@ package com.kr.algs4.part1.task1;
 
 import seidgewick.WeightedQuickUnionUF;
 
-/**
- * Created with IntelliJ IDEA.
- * User: cONST
- * Date: 17.02.14
- * Time: 0:30
- * To change this template use File | Settings | File Templates.
- */
 public class Percolation {
     private final WeightedQuickUnionUF sitesSet;
     private final boolean[][] sites;
-    private int size;
+    private final int size;
 
     /**
      * create N-by-N grid, with all sites blocked
@@ -59,7 +52,7 @@ public class Percolation {
         if (i < 1 || i > size || j < 1 || j > size)
             throw new IndexOutOfBoundsException("row or column values are out of range");
 
-        if (!sites[i - 1][j - 1]) return false;
+        if (!isOpen(i, j)) return false;
 
         for (int col = 1; col <= size; col++) {
             if (sitesSet.connected(indexOf(i, j), indexOf(1, col))) return true;
