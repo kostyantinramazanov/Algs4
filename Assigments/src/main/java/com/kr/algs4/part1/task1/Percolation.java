@@ -12,7 +12,10 @@ public class Percolation {
      */
     public Percolation(int n) {
         this.size = n;
-        sitesSet = new WeightedQuickUnionUF(size * size);
+        sitesSet = new WeightedQuickUnionUF(size + size * size);
+        for (int col = 1; col < size; col++) {
+            sitesSet.union(0, col);
+        }
         sites = new boolean[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -29,7 +32,7 @@ public class Percolation {
             throw new IndexOutOfBoundsException("row or column values are out of range");
 
         sites[i - 1][j - 1] = true;
-        if (i > 1 && isOpen(i - 1, j)) sitesSet.union(indexOf(i, j), indexOf(i - 1, j));
+        if (i == 1 || i > 1 && isOpen(i - 1, j)) sitesSet.union(indexOf(i, j), indexOf(i - 1, j));
         if (j > 1 && isOpen(i, j - 1)) sitesSet.union(indexOf(i, j), indexOf(i, j - 1));
         if (j < size && isOpen(i, j + 1)) sitesSet.union(indexOf(i, j), indexOf(i, j + 1));
         if (i < size && isOpen(i + 1, j)) sitesSet.union(indexOf(i, j), indexOf(i + 1, j));
@@ -52,11 +55,7 @@ public class Percolation {
         if (i < 1 || i > size || j < 1 || j > size)
             throw new IndexOutOfBoundsException("row or column values are out of range");
 
-        if (!isOpen(i, j)) return false;
-
-        for (int col = 1; col <= size; col++) {
-            if (sitesSet.connected(indexOf(i, j), indexOf(1, col))) return true;
-        }
+        if (isOpen(i, j) && sitesSet.connected(indexOf(i, j), 0)) return true;
 
         return false;
     }
@@ -75,6 +74,6 @@ public class Percolation {
      * Evaluates UF index of element with row <code>i</code> and column <code>j</code>
      */
     private int indexOf(int i, int j) {
-        return (i - 1) * size + j - 1;
+        return i * size + j - 1;
     }
 }
