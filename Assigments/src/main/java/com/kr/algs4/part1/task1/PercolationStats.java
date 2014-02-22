@@ -13,6 +13,10 @@ public class PercolationStats {
      * perform T independent computational experiments on an N-by-N grid
      */
     public PercolationStats(int N, int T) {
+        if (N < 1 || T < 1) {
+            throw new IllegalArgumentException("N and T values should be more than 0");
+        }
+
         this.T = T;
         long[] x = new long[T];
         long totalOpened = 0;

@@ -12,9 +12,10 @@ public class Percolation {
      */
     public Percolation(int n) {
         this.size = n;
-        sitesSet = new WeightedQuickUnionUF(size + size * size);
+        sitesSet = new WeightedQuickUnionUF(2 * size + size * size);
         for (int col = 1; col < size; col++) {
             sitesSet.union(0, col);
+            sitesSet.union(indexOf(size + 1, 0), indexOf(size + 1, col));
         }
         sites = new boolean[size][size];
         for (int row = 0; row < size; row++) {
@@ -35,7 +36,7 @@ public class Percolation {
         if (i == 1 || i > 1 && isOpen(i - 1, j)) sitesSet.union(indexOf(i, j), indexOf(i - 1, j));
         if (j > 1 && isOpen(i, j - 1)) sitesSet.union(indexOf(i, j), indexOf(i, j - 1));
         if (j < size && isOpen(i, j + 1)) sitesSet.union(indexOf(i, j), indexOf(i, j + 1));
-        if (i < size && isOpen(i + 1, j)) sitesSet.union(indexOf(i, j), indexOf(i + 1, j));
+        if (i == size || i < size && isOpen(i + 1, j)) sitesSet.union(indexOf(i, j), indexOf(i + 1, j));
     }
 
     /**
@@ -64,10 +65,7 @@ public class Percolation {
      * does the system percolate?
      */
     public boolean percolates() {
-        for (int col = 1; col <= size; col++) {
-            if (isFull(size, col)) return true;
-        }
-        return false;
+        return sitesSet.connected(0, indexOf(size + 1, 1));
     }
 
     /**
