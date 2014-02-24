@@ -1,3 +1,7 @@
+package com.kr.algs4.part1.task1;
+
+import seidgewick.WeightedQuickUnionUF;
+
 public class Percolation {
     private final WeightedQuickUnionUF sitesSet;
     private final boolean[][] sites;
