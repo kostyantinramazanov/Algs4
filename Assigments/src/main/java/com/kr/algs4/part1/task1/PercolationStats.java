@@ -1,9 +1,3 @@
-package com.kr.algs4.part1.task1;
-
-import seidgewick.StdOut;
-import seidgewick.StdRandom;
-import seidgewick.Stopwatch;
-
 public class PercolationStats {
     private double mean = 0.0;
     private double stddev = 0.0;
