@@ -3,6 +3,8 @@ package com.kr.algs4.part1.task2;
 import seidgewick.StdIn;
 import seidgewick.StdOut;
 
+import java.util.NoSuchElementException;
+
 public class Subset {
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -20,7 +22,7 @@ public class Subset {
             try {
                 String item = StdIn.readString();
                 queue.enqueue(item);
-            } catch (Exception e) {
+            } catch (NoSuchElementException e) {
                 break;
             }
         }
