@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
+    private Node<Item> first;
+    private Node<Item> last;
+    private int size;
+
     private class Node<Item> {
         private Item value;
         private Node<Item> prev;
@@ -27,9 +31,34 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
-    private Node<Item> first;
-    private Node<Item> last;
-    private int size;
+    private class DequeIterator<Item> implements Iterator<Item> {
+        private Node<Item> current;
+
+        public DequeIterator(Deque deque) {
+            current = deque.first;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Called next() on the empty Deque.");
+            }
+
+            Node<Item> result = current;
+            current = result.next;
+            return result.value;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Iterator doesn't support removal.");
+        }
+    }
 
     /**
      * construct an empty deque
@@ -126,30 +155,7 @@ public class Deque<Item> implements Iterable<Item> {
      */
     @Override
     public Iterator<Item> iterator() {
-        return new Iterator<Item>() {
-            Node<Item> current = first;
-
-            @Override
-            public boolean hasNext() {
-                return current != null;
-            }
-
-            @Override
-            public Item next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException("Called next() on the empty Deque.");
-                }
-
-                Node<Item> result = current;
-                current = result.next;
-                return result.value;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Iterator doesn't support removal.");
-            }
-        };
+        return new DequeIterator<Item>(this);
     }
 
     /**
@@ -176,9 +182,10 @@ public class Deque<Item> implements Iterable<Item> {
         deq2.addFirst("away");
 
         Iterator<String> iterator = deq2.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             StdOut.println(iterator.next());
-        };
+        }
+        ;
 
         while (!deq2.isEmpty()) {
             StdOut.println(deq2.removeLast());
