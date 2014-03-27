@@ -8,7 +8,10 @@ public class Board {
 
     public Board(int[][] blocks) {
         this.size = blocks.length;
-        this.blocks = blocks;
+        this.blocks = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            this.blocks[i] = blocks[i].clone();
+        }
     }
 
     /**
@@ -62,24 +65,17 @@ public class Board {
      * a board obtained by exchanging two adjacent blocks in the same row
      */
     public Board twin() {
-        Board result;
-        boolean swapNextRow = false;
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (swapNextRow || blocks[i][j] != i * size + j + 1 && blocks[i][j] != 0) {
-                    int other = j == 0 ? j + 1 : j - 1;
-                    if(blocks[i][other] == 0){
-                        swapNextRow = true;
-                        break;
-                    }
-                    int[][] newBlocks = cloneArray(blocks);
-                    int temp = newBlocks[i][j];
-                    newBlocks[i][j] = newBlocks[i][other];
-                    newBlocks[i][other] = temp;
-                    return new Board(newBlocks);
-                }
+            if (blocks[i][0] != 0 && blocks[i][1] != 0) {
+                int[][] newBlocks = cloneArray(blocks, i, i);
+                int temp = blocks[i][0];
+                newBlocks[i][0] = blocks[i][1];
+                newBlocks[i][1] = temp;
+
+                return new Board(newBlocks);
             }
         }
+
         return this;
     }
 
@@ -91,6 +87,7 @@ public class Board {
         if (this == y) return true;
         if (y instanceof Board && this.dimension() == ((Board) y).dimension()) {
             Board that = (Board) y;
+
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if (blocks[i][j] != that.blocks[i][j]) return false;
@@ -99,6 +96,7 @@ public class Board {
             return true;
         }
         return false;
+
     }
 
     /**
@@ -111,29 +109,29 @@ public class Board {
                 if (blocks[i][j] == 0) {
                     //watch up
                     if (i > 0) {
-                        int[][] newBlocks = cloneArray(blocks);
-                        newBlocks[i][j] = newBlocks[i - 1][j];
+                        int[][] newBlocks = cloneArray(blocks, i, i - 1);
+                        newBlocks[i][j] = blocks[i - 1][j];
                         newBlocks[i - 1][j] = 0;
                         result.add(new Board(newBlocks));
                     }
                     //watch down
                     if (i < size - 1) {
-                        int[][] newBlocks = cloneArray(blocks);
-                        newBlocks[i][j] = newBlocks[i + 1][j];
+                        int[][] newBlocks = cloneArray(blocks, i, i + 1);
+                        newBlocks[i][j] = blocks[i + 1][j];
                         newBlocks[i + 1][j] = 0;
                         result.add(new Board(newBlocks));
                     }
                     //watch left
                     if (j > 0) {
-                        int[][] newBlocks = cloneArray(blocks);
-                        newBlocks[i][j] = newBlocks[i][j - 1];
+                        int[][] newBlocks = cloneArray(blocks, i, i);
+                        newBlocks[i][j] = blocks[i][j - 1];
                         newBlocks[i][j - 1] = 0;
                         result.add(new Board(newBlocks));
                     }
                     //watch right
                     if (j < size - 1) {
-                        int[][] newBlocks = cloneArray(blocks);
-                        newBlocks[i][j] = newBlocks[i][j + 1];
+                        int[][] newBlocks = cloneArray(blocks, i, i);
+                        newBlocks[i][j] = blocks[i][j + 1];
                         newBlocks[i][j + 1] = 0;
                         result.add(new Board(newBlocks));
                     }
@@ -144,10 +142,14 @@ public class Board {
         return result;
     }
 
-    private int[][] cloneArray(int[][] blocks) {
+    private int[][] cloneArray(int[][] array, int row1, int row2) {
         int[][] result = new int[size][size];
         for (int i = 0; i < size; i++) {
-            result[i] = blocks[i].clone();
+            if (i == row1 || i == row2) {
+                result[i] = array[i].clone();
+            } else {
+                result[i] = array[i];
+            }
         }
         return result;
     }

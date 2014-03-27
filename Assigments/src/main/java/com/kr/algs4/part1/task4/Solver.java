@@ -10,7 +10,6 @@ import java.util.Comparator;
 public class Solver {
     private final Board board;
     private final LinkedQueue<Board> solution = new LinkedQueue<Board>();
-    ;
     private boolean isSolvable = false;
 
     /**
@@ -22,19 +21,21 @@ public class Solver {
         final Comparator<Board> solverComparator = new Comparator<Board>() {
             @Override
             public int compare(Board o1, Board o2) {
-//                return o1.manhattan() - o2.manhattan();
-                return o1.hamming() - o2.hamming();
+                return o1.manhattan() - o2.manhattan();
             }
         };
 
         MinPQ<Board> pq = new MinPQ<Board>(solverComparator);
         MinPQ<Board> twinPq = new MinPQ<Board>(solverComparator);
-
-        Board current = board;
         Board previous = board;
         Board twin = board.twin();
         Board previousTwin = twin;
+        pq.insert(previous);
+        twinPq.insert(twin);
         do {
+            Board current = pq.delMin();
+            twin = twinPq.delMin();
+
             solution.enqueue(current);
             if (!current.isGoal()) {
                 for (Board neighbour : current.neighbors()) {
@@ -59,8 +60,7 @@ public class Solver {
             }
 
             previous = current;
-            current = pq.delMin();
-            twin = twinPq.delMin();
+            previousTwin = twin;
         } while (!pq.isEmpty() || !twinPq.isEmpty());
     }
 
