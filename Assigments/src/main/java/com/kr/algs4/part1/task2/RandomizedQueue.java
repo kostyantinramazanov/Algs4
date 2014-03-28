@@ -45,9 +45,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item dequeue() {
         int factor = StdRandom.uniform(deque.size() + 1);
-        if(factor % 2 == 0){
+        if (factor % 2 == 0) {
             return deque.removeLast();
-        } else{
+        } else {
             return deque.removeLast();
         }
     }

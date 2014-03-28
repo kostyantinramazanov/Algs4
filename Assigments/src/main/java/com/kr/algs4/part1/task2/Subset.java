@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 public class Subset {
     public static void main(String[] args) {
         if (args.length != 1) {
-            StdOut.println("Not enough arguments specified. Pleae set k");
+            StdOut.println("Not enough arguments specified. Please set k");
             return;
         }
         int k = Integer.parseInt(args[0]);

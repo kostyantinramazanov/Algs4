@@ -1,5 +1,6 @@
 package com.kr.algs4.part1.task3;
 
+import com.kr.algs4.part1.task3.Point;
 import seidgewick.*;
 
 import java.io.File;

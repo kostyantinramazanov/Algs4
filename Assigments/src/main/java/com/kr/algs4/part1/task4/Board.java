@@ -5,12 +5,24 @@ import seidgewick.LinkedBag;
 public class Board {
     private final int size;
     private final int[][] blocks;
+    private int manhattan;
+    private int hamming;
 
     public Board(int[][] blocks) {
         this.size = blocks.length;
         this.blocks = new int[size][size];
+
         for (int i = 0; i < size; i++) {
             this.blocks[i] = blocks[i].clone();
+            for (int j = 0; j < size; j++) {
+                if (blocks[i][j] != i * size + j + 1 && blocks[i][j] != 0) {
+                    this.hamming++;
+                    int x = (blocks[i][j] - 1) / size;
+                    int y = (blocks[i][j] - 1) % size;
+
+                    this.manhattan += Math.abs(x - i) + Math.abs(y - j);
+                }
+            }
         }
     }
 
@@ -25,40 +37,21 @@ public class Board {
      * number of blocks out of place
      */
     public int hamming() {
-        int result = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (blocks[i][j] != i * size + j + 1 && blocks[i][j] != 0) {
-                    result++;
-                }
-            }
-        }
-        return result;
+        return this.hamming;
     }
 
     /**
      * sum of Manhattan distances between blocks and goal
      */
     public int manhattan() {
-        int result = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (blocks[i][j] != i * size + j + 1 && blocks[i][j] != 0) {
-                    int x = (blocks[i][j] - 1) / size;
-                    int y = (blocks[i][j] - 1) % size;
-
-                    result += Math.abs(x - i) + Math.abs(y - j);
-                }
-            }
-        }
-        return result;
+      return this.manhattan;
     }
 
     /**
      * is this board the goal board?
      */
     public boolean isGoal() {
-        return hamming() == 0;
+        return hamming == 0;
     }
 
     /**

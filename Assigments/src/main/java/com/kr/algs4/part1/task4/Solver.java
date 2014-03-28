@@ -36,10 +36,13 @@ public class Solver {
             Board current = pq.delMin();
             twin = twinPq.delMin();
 
+            int cValue = current.hamming();
+            int twinCValue = twin.hamming();
+
             solution.enqueue(current);
             if (!current.isGoal()) {
                 for (Board neighbour : current.neighbors()) {
-                    if (!neighbour.equals(previous)) {
+                    if (!neighbour.equals(previous) /*&& !(neighbour.hamming() > cValue)*/) {
                         pq.insert(neighbour);
                     }
                 }
@@ -50,7 +53,7 @@ public class Solver {
 
             if (!twin.isGoal()) {
                 for (Board neighbour : twin.neighbors()) {
-                    if (!neighbour.equals(previousTwin)) {
+                    if (!neighbour.equals(previousTwin) /*&& !(neighbour.hamming() > twinCValue)*/) {
                         twinPq.insert(neighbour);
                     }
                 }
