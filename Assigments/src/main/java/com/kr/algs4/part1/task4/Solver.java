@@ -18,53 +18,48 @@ public class Solver {
     public Solver(Board initial) {
         this.board = initial;
 
-        final Comparator<Board> solverComparator = new Comparator<Board>() {
+        final Comparator<SearchNode> solverComparator = new Comparator<SearchNode>() {
             @Override
-            public int compare(Board o1, Board o2) {
-                return o1.manhattan() - o2.manhattan();
+            public int compare(SearchNode o1, SearchNode o2) {
+                return o1.weight() - o2.weight();
             }
         };
+        try {
+            MinPQ<SearchNode> pq = new MinPQ<SearchNode>(solverComparator);
+            MinPQ<SearchNode> twinPq = new MinPQ<SearchNode>(solverComparator);
 
-        MinPQ<Board> pq = new MinPQ<Board>(solverComparator);
-        MinPQ<Board> twinPq = new MinPQ<Board>(solverComparator);
-        Board previous = board;
-        Board twin = board.twin();
-        Board previousTwin = twin;
-        pq.insert(previous);
-        twinPq.insert(twin);
-        do {
-            Board current = pq.delMin();
-            twin = twinPq.delMin();
+            pq.insert(new SearchNode(board, null, 0));
+            twinPq.insert(new SearchNode(board.twin(), null, 0));
+            do {
+                SearchNode current = pq.delMin();
+                SearchNode twin = twinPq.delMin();
 
-            int cValue = current.hamming();
-            int twinCValue = twin.hamming();
-
-            solution.enqueue(current);
-            if (!current.isGoal()) {
-                for (Board neighbour : current.neighbors()) {
-                    if (!neighbour.equals(previous) /*&& !(neighbour.hamming() > cValue)*/) {
-                        pq.insert(neighbour);
+                solution.enqueue(current.getBoard());
+                if (!current.getBoard().isGoal()) {
+                    for (Board neighbour : current.getBoard().neighbors()) {
+                        if (current.getParent() == null || current.getParent() != null && !neighbour.equals(current.getParent().getBoard())) {
+                            pq.insert(new SearchNode(neighbour, current, current.moves() + 1));
+                        }
                     }
+                } else {
+                    isSolvable = true;
+                    break;
                 }
-            } else {
-                isSolvable = true;
-                break;
-            }
 
-            if (!twin.isGoal()) {
-                for (Board neighbour : twin.neighbors()) {
-                    if (!neighbour.equals(previousTwin) /*&& !(neighbour.hamming() > twinCValue)*/) {
-                        twinPq.insert(neighbour);
+                if (!twin.getBoard().isGoal()) {
+                    for (Board neighbour : twin.getBoard().neighbors()) {
+                        if (twin.getParent() == null || twin.getParent() != null && !neighbour.equals(twin.getParent().getBoard())) {
+                            twinPq.insert(new SearchNode(neighbour, twin, twin.moves() + 1));
+                        }
                     }
+                } else {
+                    isSolvable = false;
+                    break;
                 }
-            } else {
-                isSolvable = false;
-                break;
-            }
-
-            previous = current;
-            previousTwin = twin;
-        } while (!pq.isEmpty() || !twinPq.isEmpty());
+            } while (!pq.isEmpty() || !twinPq.isEmpty());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -111,6 +106,34 @@ public class Solver {
             StdOut.println("Minimum number of moves = " + solver.moves());
             for (Board board : solver.solution())
                 StdOut.println(board);
+        }
+    }
+
+    private class SearchNode {
+        private final int moves;
+        private final Board board;
+        private final SearchNode parent;
+
+        private SearchNode(Board board, SearchNode parent, int moves) {
+            this.board = board;
+            this.parent = parent;
+            this.moves = moves;
+        }
+
+        public int weight() {
+            return board.manhattan() + moves;
+        }
+
+        public Board getBoard() {
+            return board;
+        }
+
+        private SearchNode getParent() {
+            return parent;
+        }
+
+        public int moves() {
+            return moves;
         }
     }
 }

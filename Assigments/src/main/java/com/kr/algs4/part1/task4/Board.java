@@ -10,11 +10,11 @@ public class Board {
 
     public Board(int[][] blocks) {
         this.size = blocks.length;
-        this.blocks = new int[size][size];
+        this.blocks = cloneArray(blocks, size + 1, size + 1);
 
         for (int i = 0; i < size; i++) {
-            this.blocks[i] = blocks[i].clone();
             for (int j = 0; j < size; j++) {
+                this.blocks[i][j] = blocks[i][j];
                 if (blocks[i][j] != i * size + j + 1 && blocks[i][j] != 0) {
                     this.hamming++;
                     int x = (blocks[i][j] - 1) / size;
@@ -24,6 +24,18 @@ public class Board {
                 }
             }
         }
+    }
+
+    private int[][] cloneArray(int[][] array, int row1, int row2) {
+        int[][] result = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            if (i == row1 || i == row2) {
+                result[i] = array[i].clone();
+            } else {
+                result[i] = array[i];
+            }
+        }
+        return result;
     }
 
     /**
@@ -44,7 +56,7 @@ public class Board {
      * sum of Manhattan distances between blocks and goal
      */
     public int manhattan() {
-      return this.manhattan;
+        return this.manhattan;
     }
 
     /**
@@ -69,7 +81,7 @@ public class Board {
             }
         }
 
-        return this;
+        return null;
     }
 
     /**
@@ -130,18 +142,6 @@ public class Board {
                     }
                     break;
                 }
-            }
-        }
-        return result;
-    }
-
-    private int[][] cloneArray(int[][] array, int row1, int row2) {
-        int[][] result = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            if (i == row1 || i == row2) {
-                result[i] = array[i].clone();
-            } else {
-                result[i] = array[i];
             }
         }
         return result;
