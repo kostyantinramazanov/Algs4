@@ -69,7 +69,11 @@ public class Solver {
      * min number of moves to solve initial board; -1 if no solution
      */
     public int moves() {
-        return solution.size() - 1;
+        if (solution != null) {
+            return solution.size() - 1;
+        } else {
+            return -1;
+        }
     }
 
     /**
